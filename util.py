@@ -28,6 +28,8 @@ def np_to_base64(img_np):
     img.save(buffered, format="PNG")
     return u"data:image/png;base64," + base64.b64encode(buffered.getvalue()).decode("ascii")
 
+
+
 def np_img(myarray):
-    im = Image.fromarray(np.reshape(myarray*255, (256, 256)))
+    im = Image.fromarray((np.squeeze(myarray, axis=2) * 255).astype(np.uint8))
     return im

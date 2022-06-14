@@ -4,7 +4,8 @@ import sys
 import cv2
 
 # Flask
-from flask import Flask, redirect, url_for, request, render_template, Response, jsonify, redirect
+from flask import Flask, redirect, url_for, request, render_template, Response, jsonify, redirect, send_file
+import joblib
 from werkzeug.utils import secure_filename
 from gevent.pywsgi import WSGIServer
 
@@ -16,6 +17,8 @@ from tensorflow.keras.applications.imagenet_utils import preprocess_input, decod
 from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing import image
 from datetime import datetime
+import io
+from PIL import Image
 
 
 
@@ -92,7 +95,7 @@ model.compile(optimizer="adam", loss="binary_crossentropy", metrics=["acc"])
 
 
 
-print('Model loaded. Check http://127.0.0.1:5000/')
+print('Model loaded. Check http://127.0.0.1:5002/')
 
 
 # Model saved with Keras model.save()
@@ -136,7 +139,7 @@ def predict():
         # Make prediction
         preds = model_predict(img, model)
         n_result = preds > 0.5
-        result = np_img(n_result)
+        #result = np_img(n_result[0])
 
         # Process your result for human
         #pred_proba = "{:.3f}".format(np.amax(preds))    # Max probability
@@ -148,15 +151,14 @@ def predict():
         # Serialize the result, you can add additional fields
         mask = img_name+"_mask.png"
         
-        cv2.imwrite("./ploads/mask/"+mask,np_img(result[0]))
-
-        return result
-
+        cv2.imwrite("./uploads/mask/"+mask,n_result[0]*255)
+        img_r = cv2.imread("./uploads/mask/"+mask,0)
+        return send_file(img_r, mimetype='image/PNG')
     return None
 
 
 if __name__ == '__main__':
-    app.run(port=5002, threaded=False)
+    app.run(port=5009, threaded=False)
 
     # Serve the app with gevent
     #http_server = WSGIServer(('0.0.0.0', 5000), app)
