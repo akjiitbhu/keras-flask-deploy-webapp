@@ -7,6 +7,7 @@ import numpy as np
 
 from PIL import Image
 from io import BytesIO
+from matplotlib import cm
 
 
 def base64_to_pil(img_base64):
@@ -27,3 +28,6 @@ def np_to_base64(img_np):
     img.save(buffered, format="PNG")
     return u"data:image/png;base64," + base64.b64encode(buffered.getvalue()).decode("ascii")
 
+def np_img(myarray):
+    im = Image.fromarray(np.reshape(myarray*255, (256, 256)))
+    return im
