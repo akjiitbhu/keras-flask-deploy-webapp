@@ -148,6 +148,7 @@ def predict():
         #result = str(pred_class[0][0][1])               # Convert to string
         #result = result.replace('_', ' ').capitalize()
         
+        print(n_result)
         # Serialize the result, you can add additional fields
         mask = img_name+"_mask.png"
         
